@@ -4,6 +4,7 @@ const $$ = document.querySelectorAll.bind(document);
 
 const shoesBox = $('.shoes');
 const imageBig = $('.shoes__left-image img');
+const discount = $('.shoes__left-discount');
 const title = $('.shoes__content-title');
 const desc = $('.shoes__content-desc');
 const price = $('.shoes__content-price');
@@ -41,13 +42,17 @@ class UI {
         let shoes = Storage.getShoes(); 
         
         imageBig.src = shoes.image;
-
+        discount.innerHTML = `Giảm ${shoes.discount}%`;    
         title.innerText = shoes.title;
         desc.innerText = shoes.description;
-        price.innerHTML = parseFloat(shoes.price).toFixed(3) + '<span class="underline">đ</span>';
+        price.innerHTML = this.formatVND(shoes.price);
         listImage[0].src = shoes.image;
         listImage[1].src = shoes.imageSmall_1;
         listImage[2].src = shoes.imageSmall_2;
+    }
+
+    formatVND(price) {
+        return price.toLocaleString('vi', {style : 'currency', currency : 'VND'});
     }
 
     // hàm xử lý khi click vào các 
@@ -340,9 +345,34 @@ class UI {
                 else {
                     addBtn.name = 'add-outline';
                 }
-                // $('.shoes__content-add-list').classList.toggle('open-actived');
     
                 addBtn.parentElement.parentElement.querySelector('.shoes__content-add-list').classList.toggle('open-actived');
+            }
+        })
+    }
+
+    handleRediect() {
+        leftNavigate.addEventListener('click', (e) => {
+            let id = Storage.getShoes().id;
+            let shoeses = Storage.getAllShoes();
+
+            if(id > 1) { 
+                Storage.setShoes(shoeses[id - 2]);
+            }
+            else {
+                Storage.setShoes(shoeses[shoeses.length - 1]);
+            }
+        })
+
+        rightNavigate.addEventListener('click', (e) => {
+            let id = Storage.getShoes().id;
+            let shoeses = Storage.getAllShoes();
+
+            if(id < shoeses.length) {  
+                Storage.setShoes(shoeses[id]);
+            }
+            else {
+                Storage.setShoes(shoeses[0]);
             }
         })
     }
@@ -385,14 +415,12 @@ document.addEventListener('DOMContentLoaded', (e) => {
     ui.clickImage();
     ui.selectSize();
     ui.buyShoes();
-
     ui.handleClickStar();
     ui.handleComment();
-
     ui.displayComments();
     ui.setValueComment();
-
     ui.clickExtend();
+    ui.handleRediect();
 })
 
 

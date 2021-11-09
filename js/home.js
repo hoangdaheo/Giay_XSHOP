@@ -28,7 +28,7 @@ class UI {
                 <div class="product__list-item" data-id="${shoes.id}">
                     <a href="./details.html" class="product__list-top">
                         <img src="${shoes.image}" alt="" class="product__list-image">
-                        <span class="product__list-discount">Giảm ${shoes.discount} %</span>
+                        <span class="product__list-discount">Giảm ${shoes.discount}%</span>
                     </a>
                     <div class="product__list-imgSmall">
                         <img class="product__list-small" src="${shoes.image}" alt="">
@@ -36,12 +36,16 @@ class UI {
                         <img class="product__list-small"  src="${shoes.imageSmall_2}" alt="">
                     </div>
                     <a href="./details.html" class="product__list-name">${shoes.title}</a>
-                    <span class="product__list-price">${parseFloat(shoes.price).toFixed(3)}đ</span>
+                    <span class="product__list-price">${this.formatVND(shoes.price)}</span>
                 </div>
             `
         })
 
         shoesList.innerHTML = html;
+    }
+
+    formatVND(price) {
+        return price.toLocaleString('vi', {style : 'currency', currency : 'VND'});
     }
 
     hoverImage() {

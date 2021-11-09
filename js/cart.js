@@ -27,14 +27,14 @@ class UI {
                             <span class="shoes__item-size">${shoes.size}</span>
                         </a>
                     </div>
-                    <span class="shoes__item-price shoes__item-number">${parseFloat(shoes.price).toFixed(3)} <span class="underline">đ</span></span>
+                    <span class="shoes__item-price shoes__item-number">${this.formatVND(shoes.price)}</span>
                     <div class="shoes__item-quantity">
                         <ion-icon data-id="${shoes.id}" name="remove-outline" class="shoes__item-reduce shoes__item-icon" ></ion-icon>
                         <span class="shoes__item-amount">${shoes.amount}</span>
                         <ion-icon data-id="${shoes.id}" name="add-outline" class="shoes__item-increase shoes__item-icon"></ion-icon>
                     </div>
                     <div class="shoes__item-right">
-                        <span class="shoes__item-total shoes__item-number">${parseFloat(shoes.price * shoes.amount).toFixed(3)} <span class="underline">đ</span></span>
+                        <span class="shoes__item-total shoes__item-number">${this.formatVND(shoes.price * shoes.amount)}</span>
                         <ion-icon data-id="${shoes.id}" name="close-outline" class="shoes__item-remove shoes__item-icon"></ion-icon>
                     </div>
                 </div>
@@ -42,6 +42,10 @@ class UI {
         })
 
         shoesList.innerHTML = html;
+    }
+
+    formatVND(price) {
+        return price.toLocaleString('vi', {style : 'currency', currency : 'VND'});
     }
 
     // hàm đặt lại các giá trị sau khi thay đổi
@@ -60,42 +64,49 @@ class UI {
             countPriceTotal += shoes.price * shoes.amount;        
         })
 
-        provisionalValue.innerHTML = `${parseFloat(countPriceTotal).toFixed(3)} <span class="underline">đ</span>`;
+        provisionalValue.innerHTML = this.formatVND(countPriceTotal);
 
-        if(countPriceTotal > 1000  || countPriceTotal === 0) {
+        if(countPriceTotal > 1000000  || countPriceTotal === 0) {
             shipValue.innerText = 'GIAO HÀNG MIỄN PHÍ';
         }
         else {
-            shipValue.innerHTML = '30.000 <span class="underline">đ</span>';
-            countPriceTotal += 30.000;
+            shipValue.innerHTML = this.formatVND(30000);
+            countPriceTotal += 30000;
         }
 
         itemsTotal.innerText = countItemTotal;
-        totalPrice.innerHTML = `${parseFloat(countPriceTotal).toFixed(3)} <span class="underline">đ</span>`;
+        totalPrice.innerHTML = this.formatVND(countPriceTotal);
 
     }
 
     // khi click vào button tăng, giảm số lượng
     quantityAdjust() {
         let shoesItem = [...$$('.shoes__item')];
+
         shoesList.addEventListener('click', (e) => {
             let cart = Storage.getCart();
 
             if(e.target.classList.contains('shoes__item-increase')) {
                 let id = e.target.dataset.id;
-                let item = cart.find(shoes => shoes.id == id);
+                let size = parseInt(e.target.parentElement.parentElement.querySelector('.shoes__item-size').innerText);
+
+                let item = cart.find(shoes => shoes.id == id && shoes.size === size);
                 
                 item.amount++;
                 Storage.saveCart(cart);
 
                 let ele = e.target.parentElement.parentElement;
                 ele.querySelector('.shoes__item-amount').innerText = item.amount;
-                ele.querySelector('.shoes__item-total').innerHTML = `${parseFloat(item.amount * item.price).toFixed(3)} <span class="underline">đ</span>`;
+                ele.querySelector('.shoes__item-total').innerHTML = this.formatVND(item.amount * item.price);
+
+                this.setCartValue();
             }
 
             else if(e.target.classList.contains('shoes__item-reduce')) {
                 let id = e.target.dataset.id;
-                let item = cart.find(shoes => shoes.id == id);
+                let size = parseInt(e.target.parentElement.parentElement.querySelector('.shoes__item-size').innerText);
+
+                let item = cart.find(shoes => shoes.id == id && shoes.size === size);
                 
                 item.amount--;
                 
@@ -104,11 +115,11 @@ class UI {
 
                     let ele = e.target.parentElement.parentElement;
                     ele.querySelector('.shoes__item-amount').innerText = item.amount;
-                    ele.querySelector('.shoes__item-total').innerHTML = `${parseFloat(item.amount * item.price).toFixed(3)} <span class="underline">đ</span>`;
+                    ele.querySelector('.shoes__item-total').innerHTML = this.formatVND(item.amount * item.price);
                 }
+                this.setCartValue();
             }
 
-            this.setCartValue();
         })
     }
 

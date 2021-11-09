@@ -136,9 +136,21 @@ a {
   padding-bottom: 40px;
   margin-bottom: 50px;
   border-bottom: 1px solid #dbdbdb;
+  position: relative;
 }
 .shoes__left-image img {
   width: 100%;
+}
+.shoes__left-discount {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  padding: 7px 5px;
+  background-color: #00d994;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: white;
+  font-weight: 600;
 }
 .shoes__left-wrapp {
   max-width: 80%;
